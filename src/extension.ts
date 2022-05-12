@@ -63,11 +63,17 @@ const getLanguageScopeName = (languageId?: string) => {
 };
 
 export function activate(context: vscode.ExtensionContext) {
+	let configuration = vscode.workspace.getConfiguration();
+	for (const editor of vscode.window.visibleTextEditors) {
+		activateMaskController(configuration, editor);
+	}
+}
+
+function activateMaskController(configuration: vscode.WorkspaceConfiguration, editor: vscode.TextEditor) {
 	// A map from language id => mask
 	const maskMap = new Map<string, any>();
 	const maskController = new MaskController(vscode.window.activeTextEditor);
 	const scopedDocument = new ScopedDocument(maskController.getEditor()?.document);
-	let configuration = vscode.workspace.getConfiguration();
 	let timeout: NodeJS.Timeout;
 	let languageScopeName: string = "";
 
